@@ -1,0 +1,68 @@
+/* styles.css */
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+#map {
+    min-height: 65vh;
+    width: 93vw;
+    margin: 2rem;
+    border-radius: 5px;
+  }
+
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #333;
+    padding: 10px 20px;
+    color: white;
+}
+
+.navbar-left .site-name {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.navbar-right .user-name {
+    font-size: 18px;
+}
+
+main {
+    padding: 20px;
+    text-align: center;
+}
+
+h1 {
+    margin-top: 50px;
+    font-size: 36px;
+}
+
+p {
+    font-size: 18px;
+}
+
+footer {
+    display: flex;
+    flex-direction: column;
+    background-color: #31363f;
+}
+
+.info {
+    color: #eeeeee;
+}
+
+.info p {
+    text-align: center;
+}
+
+.bio {
+    color: #eeeeee;
+}
+
+.bio p {
+    text-align: center;
+}
