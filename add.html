@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tambah Jalan Page</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+    <link rel="stylesheet" href="css/add.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-left">
+            <span class="site-name">GIS Bali</span>
+        </div>
+        <div class="navbar-right">
+            <span class="user-name">John Doe</span>
+        </div>
+    </nav>
+    <main>
+        <h1>Tambah Data Ruas Jalan</h1>
+        <div id="map"></div>
+        <form id="ruasJalanForm">
+            <label for="provinsi">Provinsi:</label>
+            <select id="provinsi" name="provinsi"></select>
+    
+            <label for="kabupaten">Kabupaten/Kota:</label>
+            <select id="kabupaten" name="kabupaten"></select>
+    
+            <label for="kecamatan">Kecamatan:</label>
+            <select id="kecamatan" name="kecamatan"></select>
+    
+            <label for="desa">Desa:</label>
+            <select id="desa" name="desa_id"></select>
+    
+            <label for="namaRuas">Nama Ruas:</label>
+            <input type="text" id="namaRuas" name="nama_ruas">
+    
+            <label for="kodeRuas">Kode Ruas:</label>
+            <input type="text" id="kodeRuas" name="kode_ruas">
+    
+            <label for="jenisPerkerasan">Jenis Perkerasan:</label>
+            <select id="jenisPerkerasan" name="eksisting_id"></select>
+    
+            <label for="kondisiJalan">Kondisi Jalan:</label>
+            <select id="kondisiJalan" name="kondisi_id"></select>
+    
+            <label for="jenisJalan">Jenis Jalan:</label>
+            <select id="jenisJalan" name="jenisjalan_id">
+            </select>
+
+            <label for="lebar">Lebar:</label>
+            <input id="lebar" name="lebar">
+            </input>
+            
+            <label for="keterangan">Keterangan:</label>
+            <textarea id="keterangan" name="keterangan"></textarea>
+
+            <label for="latlng">LatLng:</label>
+            <textarea id="latlng" name="latlng" readonly></textarea>
+    
+            <button type="submit">Submit</button>
+        </form>
+    </main>
+    <footer>
+        <div class="info">
+          <p>Geographic Information System</p>
+        </div>
+        <div class="bio">
+          <p>I Putu Yuda Dharmawan &#169; 2024, Denpasar, Bali</p>
+        </div>
+    </footer>
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/@mapbox/polyline"></script>
+    <script src="https://unpkg.com/axios@1.6.7/dist/axios.min.js"></script>
+    <script src="/js/add.js"></script>
+</body>
+</html>
