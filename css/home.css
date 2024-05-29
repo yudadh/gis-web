@@ -21,14 +21,21 @@ body {
     padding: 10px 20px;
     color: white;
 }
-
 .navbar-left .site-name {
     font-size: 24px;
     font-weight: bold;
 }
 
+.navbar-right {
+    display: flex;
+    gap: 2rem;
+}
 .navbar-right .user-name {
     font-size: 18px;
+}
+
+.navbar-right #logout {
+    cursor: pointer;
 }
 
 main {
@@ -37,7 +44,7 @@ main {
 }
 
 h1 {
-    margin-top: 50px;
+    margin-top: 2rem;
     font-size: 36px;
 }
 

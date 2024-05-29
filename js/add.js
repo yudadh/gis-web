@@ -18,6 +18,9 @@ axios.get(url, {
     console.log(error)
 })
 
+document.getElementById('back-btn').addEventListener('click', () => {
+    window.location.href = '/home.html'
+})
     // Initialize the map
 var map = L.map('map').setView([-8.4095188, 115.188919], 11);
 

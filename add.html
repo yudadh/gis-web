@@ -17,46 +17,49 @@
         </div>
     </nav>
     <main>
+        <div class="back-btn">
+            <button id="back-btn">Kembali</button>
+        </div>
         <h1>Tambah Data Ruas Jalan</h1>
         <div id="map"></div>
         <form id="ruasJalanForm">
             <label for="provinsi">Provinsi:</label>
-            <select id="provinsi" name="provinsi"></select>
+            <select id="provinsi" name="provinsi" required></select>
     
             <label for="kabupaten">Kabupaten/Kota:</label>
-            <select id="kabupaten" name="kabupaten"></select>
+            <select id="kabupaten" name="kabupaten" required></select>
     
             <label for="kecamatan">Kecamatan:</label>
-            <select id="kecamatan" name="kecamatan"></select>
+            <select id="kecamatan" name="kecamatan" required></select>
     
             <label for="desa">Desa:</label>
-            <select id="desa" name="desa_id"></select>
+            <select id="desa" name="desa_id" required></select>
     
             <label for="namaRuas">Nama Ruas:</label>
-            <input type="text" id="namaRuas" name="nama_ruas">
+            <input type="text" id="namaRuas" name="nama_ruas" required>
     
             <label for="kodeRuas">Kode Ruas:</label>
-            <input type="text" id="kodeRuas" name="kode_ruas">
+            <input type="text" id="kodeRuas" name="kode_ruas" required>
     
             <label for="jenisPerkerasan">Jenis Perkerasan:</label>
-            <select id="jenisPerkerasan" name="eksisting_id"></select>
+            <select id="jenisPerkerasan" name="eksisting_id" required></select>
     
             <label for="kondisiJalan">Kondisi Jalan:</label>
-            <select id="kondisiJalan" name="kondisi_id"></select>
+            <select id="kondisiJalan" name="kondisi_id" required></select>
     
             <label for="jenisJalan">Jenis Jalan:</label>
-            <select id="jenisJalan" name="jenisjalan_id">
+            <select id="jenisJalan" name="jenisjalan_id" required>
             </select>
 
             <label for="lebar">Lebar:</label>
-            <input id="lebar" name="lebar">
+            <input id="lebar" name="lebar" required>
             </input>
             
             <label for="keterangan">Keterangan:</label>
             <textarea id="keterangan" name="keterangan"></textarea>
 
             <label for="latlng">LatLng:</label>
-            <textarea id="latlng" name="latlng" readonly></textarea>
+            <textarea id="latlng" name="latlng" readonly required></textarea>
     
             <button type="submit">Submit</button>
         </form>

@@ -14,11 +14,17 @@
             <span class="site-name">GIS Bali</span>
         </div>
         <div class="navbar-right">
-            <span class="user-name">John Doe</span>
+            <div class="user">
+                <span class="user-logo"><i class="fa-solid fa-user-doctor"></i></span>
+                <span class="user-name">John Doe</span>
+            </div>
+            <div id="logout">
+                <span><i class="fa-solid fa-share-from-square"></i></span>
+            </div>
         </div>
     </nav>
     <main>
-        <h1>Welcome to GIS Bali</h1>
+        <h1>Data Ruas Jalan Bali</h1>
         <div id="map"></div>
         <button id="add-button">Tambah Data</button>
     </main>
@@ -31,6 +37,7 @@
         </div>
     </footer>
      <!-- Include Leaflet JS -->
+     <script src="https://kit.fontawesome.com/3685e22339.js" crossorigin="anonymous"></script>
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script src="https://unpkg.com/@mapbox/polyline"></script>
     <script src="https://unpkg.com/axios@1.6.7/dist/axios.min.js"></script>

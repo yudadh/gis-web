@@ -20,6 +20,22 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log(error)
     })
 
+    document.getElementById('logout').addEventListener('click', () => {
+        const logoutUrl = "https://gisapis.manpits.xyz/api/logout"
+        axios.post(logoutUrl, {}, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        })
+        .then(response => {
+            alert(response.data.meta.message)
+            window.location.href = "/login.html"
+        })
+        .catch(error => {
+            console.log(error)
+        })
+    })
+
     let map = L.map("map").setView([-8.4095188, 115.188919], 11);
     // menambahkan tilelayer
     L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
