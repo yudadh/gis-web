@@ -11,7 +11,7 @@
 <body>
     <nav class="navbar">
         <div class="navbar-left">
-            <span class="site-name">GIS Bali</span>
+            <span class="site-name">Jalanan Bali</span>
         </div>
         <div class="navbar-right">
             <div class="user">
@@ -26,7 +26,38 @@
     <main>
         <h1>Data Ruas Jalan Bali</h1>
         <div id="map"></div>
-        <button id="add-button">Tambah Data</button>
+        <div class="add-button-container">
+          <button id="add-button">Tambah Data</button>
+        </div>
+        <div class="table-container">
+
+          <table id="hospital-table">
+              <thead>
+                <tr>
+                  <th>No</th>
+                  <th>Nama Ruas</th>
+                  <th>Kode Ruas</th>
+                  <th>Panjang</th>
+                  <th>Lebar</th>
+                  <th>Perkerasan</th>
+                  <th>Kondisi</th>
+                  <th>Jenis</th>
+                  <th>Action</th>
+                  <!-- <th>Keterangan</th> -->
+                </tr>
+              </thead>
+              <tbody>
+                <!-- Rows will be added here dynamically -->
+              </tbody>
+          </table>
+        </div>
+        <div id="confirmPopup" class="modal">
+          <div class="modal-content">
+              <p>Apakah Anda yakin ingin menghapus data?</p>
+              <button id="confirmYes">Ya</button>
+              <button id="confirmNo">Tidak</button>
+          </div>
+      </div>
     </main>
     <footer>
         <div class="info">

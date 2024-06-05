@@ -49,31 +49,40 @@ function calculateTotalDistance(points) {
     return totalDistance;
 }
 
-map.on('click', function(e) {
-    var latLng = e.latlng;
-    polylinePoints.push([latLng.lat, latLng.lng]);
+function addMarker(lat, lng) {
+    var marker = L.marker([lat, lng]).addTo(map)
+        .bindPopup(`Lat: ${lat}, Lng: ${lng}`).openPopup();
+
+    polylinePoints.push([lat, lng]);
     _polyline.setLatLngs(polylinePoints);
-
-    var marker = L.marker([latLng.lat, latLng.lng]).addTo(map)
-        .bindPopup(`Lat: ${latLng.lat}, Lng: ${latLng.lng}`).openPopup();
-
     markers.push(marker);
 
-    // Add event listener for right click on the marker
+    // Tambahkan event listener untuk klik kanan pada marker
     marker.on('contextmenu', function() {
-        // Remove the marker from the map
+        // Hapus marker dari peta
         map.removeLayer(marker);
 
-        // Remove the latLng from polylinePoints
-        polylinePoints = polylinePoints.filter(point => point[0] !== latLng.lat || point[1] !== latLng.lng);
+        // Hapus latLng dari polylinePoints
+        polylinePoints = polylinePoints.filter(point => point[0] !== lat || point[1] !== lng);
         _polyline.setLatLngs(polylinePoints);
 
-        // Update the LatLng textarea field
+        // Perbarui field textarea dengan koordinat polyline
         updateLatLngTextarea();
+
+        // // Kirim data yang diperbarui ke API
+        // sendUpdatedDataToAPI(polylinePoints);
+        
     });
 
-    // Update the LatLng textarea field
+    // Perbarui field textarea dengan koordinat polyline
     updateLatLngTextarea();
+    
+}
+
+
+map.on('click', function(e) {
+    var latLng = e.latlng;
+    addMarker(latLng.lat, latLng.lng);
 });
 // Function to update the LatLng textarea field
 function updateLatLngTextarea() {
@@ -113,8 +122,10 @@ function fillDropdownProvinsi(data) {
         const option = document.createElement('option');
         option.value = provinsi.id;
         option.textContent = provinsi.provinsi;
+        option.classList.add("styled-option")
         provinsiDropdown.appendChild(option);
     });
+
 
     // Event listener for provinsi dropdown
     provinsiDropdown.addEventListener('change', function() {
@@ -162,6 +173,7 @@ function fillKabupatenDropdown(kabupatenData) {
         const option = document.createElement('option');
         option.value = kabupaten.id;
         option.textContent = kabupaten.kabupaten;
+        option.classList.add("styled-option")
         kabupatenDropdown.appendChild(option);
     });
 }
@@ -173,6 +185,7 @@ function fillKecamatanDropdown(kecamatanData) {
         const option = document.createElement('option');
         option.value = kecamatan.id;
         option.textContent = kecamatan.kecamatan;
+        option.classList.add("styled-option")
         kecamatanDropdown.appendChild(option);
     });
 }
@@ -184,6 +197,7 @@ function fillDesaDropdown(desaData) {
         const option = document.createElement('option');
         option.value = desa.id;
         option.textContent = desa.desa;
+        option.classList.add("styled-option")
         desaDropdown.appendChild(option);
     });
 }
@@ -203,6 +217,7 @@ function fetchDataEksisting(url, token) {
                 const option = document.createElement('option')
                 option.value = eksisting.id
                 option.textContent = eksisting.eksisting
+                option.classList.add("styled-option")
                 jenisPerkerasanDropdown.appendChild(option)
             })
         })
@@ -224,6 +239,7 @@ function fetchDataKondisiJalan(url, token) {
                 const option = document.createElement('option')
                 option.value = eksisting.id
                 option.textContent = eksisting.kondisi
+                option.classList.add("styled-option")
                 kondisiJalanDropdown.appendChild(option)
             })
         })
@@ -245,6 +261,7 @@ function fetchDataJenisJalan(url, token) {
                 const option = document.createElement('option')
                 option.value = eksisting.id
                 option.textContent = eksisting.jenisjalan
+                option.classList.add("styled-option")
                 jenisJalanDropdown.appendChild(option)
             })
         })
@@ -281,6 +298,7 @@ document.getElementById('ruasJalanForm').addEventListener('submit', function(e) 
     delete data['kecamatan']
     delete data['latlng']
     // Encode polyline
+    console.log(polylinePoints)
     let encodedPolyline = polylinePoints.length > 0 ? polyline.encode(polylinePoints) : '';
     console.log(encodedPolyline)
 
