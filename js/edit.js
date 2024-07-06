@@ -1,10 +1,10 @@
+jwt_token = localStorage.getItem("token")
+
+if (!jwt_token) {
+    // Redirect to login page if not authenticated
+    window.location.href = '/login.html';
+}
 document.addEventListener('DOMContentLoaded', async () => {
-    jwt_token = localStorage.getItem("token")
-    
-    if (!jwt_token) {
-        // Redirect to login page if not authenticated
-        window.location.href = '/login.html';
-    }
 
     const url = "https://gisapis.manpits.xyz/api/user"
     axios.get(url, {
@@ -20,9 +20,34 @@ document.addEventListener('DOMContentLoaded', async () => {
         console.log(error)
     })
 
+    function getQueryParam(param) {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get(param);
+    }
+    const originPage = getQueryParam('origin');
+
     document.getElementById('back-btn').addEventListener('click', () => {
-        window.location.href = '/home.html'
+        if(originPage === "home") {
+            window.location.href = '/home.html'
+        }else if(originPage === "detail") {
+            window.location.href = '/detail.html'
+        }
     })
+
+    async function fetchDataPolyline(){
+        const getDataUrl = 'https://gisapis.manpits.xyz/api/ruasjalan'
+        try {
+            const response = await axios.get(getDataUrl, {
+                headers: {
+                    Authorization: `Bearer ${jwt_token}`
+                }
+            })
+            return response.data
+    
+        } catch (error) {
+            console.log(error)
+        }
+    }
 
     // document.getElementById('logout').addEventListener('click', () => {
     //     const logoutUrl = "https://gisapis.manpits.xyz/api/logout"
@@ -42,13 +67,22 @@ document.addEventListener('DOMContentLoaded', async () => {
     let polylinePoints = []
     let markers = []
     let map = L.map("map").setView([-8.4095188, 115.188919], 11);
-    var _polyline = L.polyline(polylinePoints, {color: 'blue', weight: 5}).addTo(map)
     // menambahkan tilelayer
     L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
         maxZoom: 19,
         attribution:
         '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
     }).addTo(map);
+    
+    const dataJalanAll = await fetchDataPolyline()
+    const dataJalan = await fetchDataJalan()
+    const dataJalanFix = dataJalanAll.ruasjalan.filter(jalan => jalan.id !== dataJalan.id)
+    dataJalanFix.forEach(ruasJalan => {
+        const polylinePoints_ = polyline.decode(ruasJalan.paths)
+        var polylines_ = L.polyline(polylinePoints_, {color: "red", weight: 5}).addTo(map)
+        polylines_.bindTooltip(ruasJalan.kode_ruas).openTooltip()
+    })
+    var _polyline = L.polyline(polylinePoints, {color: 'blue', weight: 5}).addTo(map)
     
     async function fetchDataWilayah() {
         const url = "https://gisapis.manpits.xyz/api/mregion"
@@ -106,7 +140,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         return response.data
     }
     
-    const dataJalan = await fetchDataJalan()
     console.log(dataJalan)
     try {
         const dataWilayah = await fetchDataWilayah()
@@ -217,10 +250,37 @@ document.addEventListener('DOMContentLoaded', async () => {
             markers.push([latlng[0], latlng[1]])
         })
         markers.forEach(latlng => {
-            L.marker([latlng[0], latlng[1]]).addTo(map)
+           var marker = L.marker([latlng[0], latlng[1]], {draggable: true}).addTo(map)
             .bindPopup(`Lat: ${latlng[0]}, Lng: ${latlng[1]}`).openPopup();
+
+            let initialLatLng
+            marker.on('dragstart', function(e) {
+                initialLatLng = e.target.getLatLng()
+            })
+
+            marker.on('dragend', function(e) {
+                const newLatLng = e.target.getLatLng()
+                const index = polylinePoints.findIndex(point => point[0] === initialLatLng.lat && point[1] === initialLatLng.lng)
+                polylinePoints[index] = [newLatLng.lat, newLatLng.lng]
+                _polyline.setLatLngs(polylinePoints)
+                updateLatLngTextarea();
+            })
+
+            marker.on('contextmenu', function() {
+                // Hapus marker dari peta
+                map.removeLayer(marker);
+        
+                // Hapus latLng dari polylinePoints
+                polylinePoints = polylinePoints.filter(point => point[0] !== latlng[0] || point[1] !== latlng[1]);
+                _polyline.setLatLngs(polylinePoints);
+        
+                // Perbarui field textarea dengan koordinat polyline
+                updateLatLngTextarea();
+                
+            });
+            _polyline.setLatLngs(polylinePoints)
+            map.fitBounds(_polyline.getBounds())
         })
-        _polyline.setLatLngs(polylinePoints)
         latlng.value = polylinePoints.map(point => `${point[0]}, ${point[1]}`).join('\n')
         
     } catch (error) {
@@ -246,20 +306,34 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     function addMarker(lat, lng) {
-        var marker = L.marker([lat, lng]).addTo(map)
+        var marker = L.marker([lat, lng], {draggable: true}).addTo(map)
             .bindPopup(`Lat: ${lat}, Lng: ${lng}`).openPopup();
     
         polylinePoints.push([lat, lng]);
         _polyline.setLatLngs(polylinePoints);
         markers.push(marker);
+
+        let initialLatLng
+        marker.on('dragstart', function(e) {
+            initialLatLng = e.target.getLatLng()
+        })
+
+        marker.on('dragend', function(e) {
+            const newLatLng = e.target.getLatLng()
+            const index = polylinePoints.findIndex(point => point[0] === initialLatLng.lat && point[1] === initialLatLng.lng)
+            polylinePoints[index] = [newLatLng.lat, newLatLng.lng]
+            _polyline.setLatLngs(polylinePoints)
+            updateLatLngTextarea();
+        })
     
         // Tambahkan event listener untuk klik kanan pada marker
-        marker.on('contextmenu', function() {
+        marker.on('contextmenu', function(e) {
+            const currentLatLng = e.target.getLatLng();
             // Hapus marker dari peta
             map.removeLayer(marker);
     
             // Hapus latLng dari polylinePoints
-            polylinePoints = polylinePoints.filter(point => point[0] !== lat || point[1] !== lng);
+            polylinePoints = polylinePoints.filter(point => point[0] !== currentLatLng.lat || point[1] !== currentLatLng.lng);
             _polyline.setLatLngs(polylinePoints);
     
             // Perbarui field textarea dengan koordinat polyline
@@ -307,22 +381,42 @@ document.addEventListener('DOMContentLoaded', async () => {
         let panjang = calculateTotalDistance(polylinePoints)
         data['panjang'] = panjang
         
-        
-        const postUrl = 'https://gisapis.manpits.xyz/api/ruasjalan/'+ dataJalan.id
-        axios.put(postUrl, data, {
-            headers: {
-                Authorization: `Bearer ${jwt_token}`
+        Swal.fire({
+            title: 'Update Data',
+            text: 'Apakah Anda Yakin Ingin Update Data?',
+            icon: 'question',
+            confirmButtonText: 'Ya',
+            showCancelButton: true,
+            cancelButtonText: 'Tidak',
+            confirmButtonColor: '#4CAF50',
+            denyButtonColor: '#f44336'
+        }).then((result) => {
+            if(result.isConfirmed) {
+                const postUrl = 'https://gisapis.manpits.xyz/api/ruasjalan/'+ dataJalan.id
+                axios.put(postUrl, data, {
+                    headers: {
+                        Authorization: `Bearer ${jwt_token}`
+                    }
+                })
+                .then(response => {
+                    console.log(response.data)
+                    Swal.fire({
+                        title: "Data Ruas Jalan berhasil di edit!",
+                        icon: "success",
+                        confirmButtonText: "OK"
+                    }).then(() => {
+                        if(originPage === "home"){
+                            window.location.href = "/home.html";
+                        }else if(originPage === "detail"){
+                            window.location.href = "/detail.html"
+                        }
+                    });
+                })
+                .catch(error => {
+                    Swal.fire("Error Submit Data there is a problem!", "", "error")
+                    console.log(error)
+                })
             }
-        })
-        .then(response => {
-            console.log(response.data)
-            // alert()
-            alert('Data Ruas Jalan berhasil di edit!');
-            window.location.href = '/home.html'
-        })
-        .catch(error => {
-            alert("Error Submit Data ada masalah!")
-            console.log(error)
         })
         console.log('Form Data Submitted:', data);
     });

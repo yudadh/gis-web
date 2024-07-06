@@ -4,30 +4,65 @@ if (!jwt_token) {
     // Redirect to login page if not authenticated
     window.location.href = '/login.html';
 }
-const url = "https://gisapis.manpits.xyz/api/user"
-axios.get(url, {
-    headers: {
-        Authorization: `Bearer ${jwt_token}`,
-    }
-})
-.then(response => {
-    const userName = response.data.data.user.name; // Replace this with dynamic data
-    document.querySelector('.user-name').textContent = userName;
-})
-.catch(error => {
-    console.log(error)
-})
-
-document.getElementById('back-btn').addEventListener('click', () => {
-    window.location.href = '/home.html'
-})
-    // Initialize the map
+// Initialize the map
 var map = L.map('map').setView([-8.4095188, 115.188919], 11);
 
 // Set up the OpenStreetMap layer
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 19
 }).addTo(map);
+
+document.addEventListener('DOMContentLoaded', async () => {
+    const url = "https://gisapis.manpits.xyz/api/user"
+    axios.get(url, {
+        headers: {
+            Authorization: `Bearer ${jwt_token}`,
+        }
+    })
+    .then(response => {
+        const userName = response.data.data.user.name; // Replace this with dynamic data
+        document.querySelector('.user-name').textContent = userName;
+    })
+    .catch(error => {
+        console.log(error)
+    })
+    
+    function getQueryParam(param) {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get(param);
+    }
+    
+    const originPage = getQueryParam('origin');
+    document.getElementById('back-btn').addEventListener('click', () => {
+        if(originPage === "home"){
+            window.location.href = '/home.html'
+        }else if(originPage === "detail"){
+            window.location.href = '/detail.html'
+        }
+    })
+
+    const dataJalan = await fetchDataPolyline()
+    dataJalan.ruasjalan.forEach(ruasJalan => {
+        const polylinePoints = polyline.decode(ruasJalan.paths)
+        var _polylines = L.polyline(polylinePoints, {color: "red", weight: 5}).addTo(map)
+         _polylines.bindTooltip(ruasJalan.kode_ruas).openTooltip()
+    })
+})
+
+async function fetchDataPolyline(){
+    const getDataUrl = 'https://gisapis.manpits.xyz/api/ruasjalan'
+    try {
+        const response = await axios.get(getDataUrl, {
+            headers: {
+                Authorization: `Bearer ${jwt_token}`
+            }
+        })
+        return response.data
+
+    } catch (error) {
+        console.log(error)
+    }
+}
 
 // Add a marker on map click
 let polylinePoints = [];
@@ -36,7 +71,6 @@ var _polyline = L.polyline(polylinePoints, {color: 'blue'}).addTo(map);
 
 // Function to calculate distance between two points
 function calculateDistance(pointA, pointB) {
-    // return L.latLng(pointA).distanceTo(L.latLng(pointB)); // Distance in meters
     return map.distance(pointA, pointB)
 }
 
@@ -50,7 +84,7 @@ function calculateTotalDistance(points) {
 }
 
 function addMarker(lat, lng) {
-    var marker = L.marker([lat, lng]).addTo(map)
+    var marker = L.marker([lat, lng], {draggable: true}).addTo(map)
         .bindPopup(`Lat: ${lat}, Lng: ${lng}`).openPopup();
 
     polylinePoints.push([lat, lng]);
@@ -58,25 +92,38 @@ function addMarker(lat, lng) {
     markers.push(marker);
 
     // Tambahkan event listener untuk klik kanan pada marker
-    marker.on('contextmenu', function() {
+    marker.on('contextmenu', function(e) {
+        const currentLatLng = e.target.getLatLng();
         // Hapus marker dari peta
         map.removeLayer(marker);
 
         // Hapus latLng dari polylinePoints
-        polylinePoints = polylinePoints.filter(point => point[0] !== lat || point[1] !== lng);
+        polylinePoints = polylinePoints.filter(point => point[0] !== currentLatLng.lat || point[1] !== currentLatLng.lng);
         _polyline.setLatLngs(polylinePoints);
 
         // Perbarui field textarea dengan koordinat polyline
         updateLatLngTextarea();
 
-        // // Kirim data yang diperbarui ke API
-        // sendUpdatedDataToAPI(polylinePoints);
-        
     });
+
+    let initialLatLng
+
+    marker.on('dragstart', function(e) {
+        initialLatLng = e.target.getLatLng()
+    })
+
+    marker.on('dragend', function(e) {
+        console.log(e)
+        const newLatlng = e.target.getLatLng()
+        const index = polylinePoints.findIndex(point => point[0] === initialLatLng.lat && point[1] === initialLatLng.lng)
+        polylinePoints[index] = [newLatlng.lat, newLatlng.lng]
+        _polyline.setLatLngs(polylinePoints)
+        initialLatLng = newLatlng
+        updateLatLngTextarea();
+    })
 
     // Perbarui field textarea dengan koordinat polyline
     updateLatLngTextarea();
-    
 }
 
 
@@ -281,6 +328,11 @@ fetchDataProvinsi(provinsiEndpoint , jwt_token);
 fetchDataEksisting(eksistingEndpoint , jwt_token);
 fetchDataJenisJalan(jenisJalanEndpoint , jwt_token);
 fetchDataKondisiJalan(kondisiJalanEndpoint , jwt_token);
+function getQueryParam(param) {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get(param);
+}
+const originPage = getQueryParam('origin');
 
 // Handle form submission
 document.getElementById('ruasJalanForm').addEventListener('submit', function(e) {
@@ -308,22 +360,46 @@ document.getElementById('ruasJalanForm').addEventListener('submit', function(e) 
     let panjang = calculateTotalDistance(polylinePoints)
     data['panjang'] = panjang
 
-    const postUrl = 'https://gisapis.manpits.xyz/api/ruasjalan'
-    axios.post(postUrl, data, {
-        headers: {
-            Authorization: `Bearer ${jwt_token}`
+    Swal.fire({
+        title: 'Submit Data',
+        text: 'Apakah Anda Yakin Ingin Submit Data?',
+        icon: 'question',
+        confirmButtonText: 'Ya',
+        showCancelButton: true,
+        cancelButtonText: 'Tidak',
+        confirmButtonColor: '#4CAF50',
+        denyButtonColor: '#f44336'
+    }).then((result) => {
+        if(result.isConfirmed) {
+            const postUrl = 'https://gisapis.manpits.xyz/api/ruasjalan'
+            axios.post(postUrl, data, {
+                headers: {
+                    Authorization: `Bearer ${jwt_token}`
+                }
+            })
+            .then(response => {
+                console.log(response.data)
+                Swal.fire({
+                    title: "Data Ruas Jalan berhasil ditambahkan!",
+                    icon: "success",
+                    confirmButtonText: "OK"
+                }).then(() => {
+                    if(originPage === "home") {
+                        window.location.href = "/home.html";
+                    }else if(originPage === "detail") {
+                        window.location.href = "/detail.html";
+                    }
+                });
+            })
+            .catch(error => {
+                // alert("Error Submit Data there is a problem!")
+                Swal.fire("Error Submit Data there is a problem!", "", "error")
+                console.log(error)
+            })
         }
     })
-    .then(response => {
-        console.log(response.data)
-        // alert()
-        alert('Data Ruas Jalan berhasil ditambahkan!');
-        window.location.href = '/home.html'
-    })
-    .catch(error => {
-        alert("Error Submit Data there is a problem!")
-        console.log(error)
-    })
+
+    
     console.log('Form Data Submitted:', data);
 });
 

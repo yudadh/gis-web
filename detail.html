@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home Page</title>
+    <!-- Include Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+    <link rel="stylesheet" href="/css/detail.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-left">
+            <span class="site-name">Jalanan Bali</span>
+        </div>
+        <div class="navbar-right">
+            <div class="user">
+                <span class="user-logo"><i class="fa-solid fa-user-doctor"></i></span>
+                <span class="user-name">John Doe</span>
+            </div>
+            <div id="logout">
+                <span><i class="fa-solid fa-share-from-square"></i></span>
+            </div>
+        </div>
+    </nav>
+    <main>
+        <div class="add-button-container">
+          <button id="back-btn">Kembali</button>
+          <div id="right-section">
+              <button id="add-button">Tambah Data</button>
+              <div class="search-input">
+                <input type="text" name="search" id="input-search" placeholder="search">
+                <button id="search-btn"><i class="fa-solid fa-magnifying-glass fa-lg"></i></button>
+              </div>
+            </div>
+        </div>
+
+        <div class="table-container">
+          <table id="hospital-table">
+              <thead>
+                <tr>
+                  <th>No</th>
+                  <th>Nama Ruas</th>
+                  <th>Kode Ruas</th>
+                  <th>Desa</th>
+                  <th>Kecamatan</th>
+                  <th>Panjang</th>
+                  <th>Lebar</th>
+                  <th>Perkerasan</th>
+                  <th>Kondisi</th>
+                  <th>Jenis</th>
+                  <th>Action</th>
+                  <!-- <th>Keterangan</th> -->
+                </tr>
+              </thead>
+              <tbody>
+                <!-- Rows will be added here dynamically -->
+              </tbody>
+          </table>
+          <div id="pagination-controls" class="pagination">
+            <button id="prev-btn" class="pagination-btn">Previous</button>
+            <div id="page-numbers"></div>
+            <button id="next-btn" class="pagination-btn">Next</button>
+          </div>
+        </div>
+        <div id="confirmPopup" class="modal">
+          <div class="modal-content">
+              <p>Apakah Anda yakin ingin menghapus data?</p>
+              <button id="confirmYes">Ya</button>
+              <button id="confirmNo">Tidak</button>
+          </div>
+      </div>
+    </main>
+    <footer>
+        <div class="info">
+          <p>Geographic Information System</p>
+        </div>
+        <div class="bio">
+          <p>I Putu Yuda Dharmawan &#169; 2024, Denpasar, Bali</p>
+        </div>
+    </footer>
+    <script src="https://kit.fontawesome.com/3685e22339.js" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/@mapbox/polyline"></script>
+    <script src="https://unpkg.com/axios@1.6.7/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="/js/detail.js"></script>
+</body>
+</html>

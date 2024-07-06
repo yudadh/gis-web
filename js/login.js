@@ -3,7 +3,7 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
     
     let isValid = true;
     const form = document.getElementById('loginForm')
-
+    
     const email = document.getElementById('email').value.trim();
     const password = document.getElementById('password').value.trim();
     
@@ -27,7 +27,6 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
     }
 
     if (isValid) {
-        // Here you can add code to send the form data to the server
         const formData = new FormData(form);
         const jsonObject = {};
 
@@ -37,22 +36,39 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
         console.log(jsonObject)
 
         const url = "https://gisapis.manpits.xyz/api/login"
-
+        
         axios.post(url, jsonObject)
         .then(response =>{
-            alert(response.data.meta.message)
-            // alert('Register Form submitted successfully!');
-            console.log(response.data.meta.token)
             // set token to localstorage
             const token = response.data.meta.token
             localStorage.setItem("token", token)
-            
-            window.location.href = '/home.html'
+            Swal.fire({
+                title: "Login Berhasil!",
+                icon: "success",
+                confirmButtonText: "OK"
+            }).then(() => {
+                window.location.href = '/home.html'
+            });
         })
         .catch(error => {
-            alert('Failed to submit Login form. Please try again later.');
+            Swal.fire({
+                title: "Login Gagal!",
+                icon: "error",
+                confirmButtonText: "OK"
+            }).then(() => {
+                window.location.reload()
+            });
             console.log(error)
         })
 
     }
-});
+})
+
+document.getElementById('show').addEventListener('change', () => {
+    const pass = document.getElementById('password')
+    if (pass.type === 'password'){
+        pass.type = 'text'
+    }else {
+        pass.type = 'password'
+    }
+})

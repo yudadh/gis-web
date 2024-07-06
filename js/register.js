@@ -38,12 +38,6 @@ document.getElementById('registerForm').addEventListener('submit', function(even
         passwordError.style.display = 'block';
     }
 
-    // if (password !== confirmPassword) {
-    //     isValid = false;
-    //     confirmPasswordError.textContent = 'Passwords do not match';
-    //     confirmPasswordError.style.display = 'block';
-    // }
-
     if (isValid) {
         // alert('Form submitted successfully!');
         // Here you can add code to send the form data to the server
@@ -59,14 +53,24 @@ document.getElementById('registerForm').addEventListener('submit', function(even
 
         axios.post(url, jsonObject)
         .then(response =>{
-            alert(response.data.meta.message)
-            // alert('Register Form submitted successfully!');
+            Swal.fire({
+                title: "Register Berhasil!",
+                icon: "success",
+                confirmButtonText: "OK"
+            }).then(() => {
+                window.location.href = '/login.html'
+            });
             console.log(response)
-            window.location.href = '/login.html'
         })
         .catch(error => {
-            alert('Failed to submit register form. Please try again later.');
             console.log(error)
+            Swal.fire({
+                title: "Register Gagal!",
+                icon: "error",
+                confirmButtonText: "OK"
+            }).then(() => {
+                window.location.reload()
+            });
         })
 
     }

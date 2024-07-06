@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home Page</title>
+    <title>Jalanan Bali - Home Page</title>
     <!-- Include Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
     <link rel="stylesheet" href="/css/home.css">
@@ -14,6 +14,13 @@
             <span class="site-name">Jalanan Bali</span>
         </div>
         <div class="navbar-right">
+          <div id="menu" class="dropdown">
+            <span class="menu-title">Menu</span>
+            <div class="dropdown-content">
+                <a href="/add.html?origin=home">Tambah Data Jalan</a>
+                <a href="detail.html">Lihat Detail Data</a>
+            </div>
+        </div>
             <div class="user">
                 <span class="user-logo"><i class="fa-solid fa-user-doctor"></i></span>
                 <span class="user-name">John Doe</span>
@@ -24,40 +31,45 @@
         </div>
     </nav>
     <main>
-        <h1>Data Ruas Jalan Bali</h1>
         <div id="map"></div>
-        <div class="add-button-container">
-          <button id="add-button">Tambah Data</button>
+        <div class="checkbox">
+            <div class="info-title">Jenis Jalan</div>
+            <div id="checkbox-kab" class="checkbox-child">
+                <input type="checkbox" id="kabupaten" name="kabupaten" value="kabupaten">
+                <label for="kabupaten"> Jalan Kabupaten</label><br>
+            </div>
+            <div id="checkbox-kec" class="checkbox-child">
+                <input type="checkbox" id="provinsi" name="kecamatan" value="kecamatan">
+                <label for="kecamatan"> Jalan Provinsi</label><br>
+            </div>
+            <div id="checkbox-des" class="checkbox-child">
+                <input type="checkbox" id="desa" name="desa" value="desa">
+                <label for="desa"> Jalan Desa</label><br>
+            </div>
         </div>
-        <div class="table-container">
-
-          <table id="hospital-table">
-              <thead>
-                <tr>
-                  <th>No</th>
-                  <th>Nama Ruas</th>
-                  <th>Kode Ruas</th>
-                  <th>Panjang</th>
-                  <th>Lebar</th>
-                  <th>Perkerasan</th>
-                  <th>Kondisi</th>
-                  <th>Jenis</th>
-                  <th>Action</th>
-                  <!-- <th>Keterangan</th> -->
-                </tr>
-              </thead>
-              <tbody>
-                <!-- Rows will be added here dynamically -->
-              </tbody>
-          </table>
-        </div>
+        <div class="info-jalan">
+            <div class="info-title">Kondisi Jalan</div>
+            <div class="info-child">
+                <div id="box-rusak"></div>
+                <div class="text-box"> Jalan Rusak</div>
+            </div>
+            <div class="info-child">
+                <div id="box-sedang"></div>
+                <div class="text-box"> Jalan Sedang</div>
+            </div>
+            <div class="info-child">
+                <div id="box-baik"></div>
+                <div class="text-box"> Jalan Baik</div>
+            </div>
+        </div>   
+          <!-- <button id="add-button">Tambah Data</button> -->
         <div id="confirmPopup" class="modal">
           <div class="modal-content">
               <p>Apakah Anda yakin ingin menghapus data?</p>
               <button id="confirmYes">Ya</button>
               <button id="confirmNo">Tidak</button>
           </div>
-      </div>
+        </div>
     </main>
     <footer>
         <div class="info">
@@ -67,11 +79,11 @@
           <p>I Putu Yuda Dharmawan &#169; 2024, Denpasar, Bali</p>
         </div>
     </footer>
-     <!-- Include Leaflet JS -->
-     <script src="https://kit.fontawesome.com/3685e22339.js" crossorigin="anonymous"></script>
+    <script src="https://kit.fontawesome.com/3685e22339.js" crossorigin="anonymous"></script>
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script src="https://unpkg.com/@mapbox/polyline"></script>
     <script src="https://unpkg.com/axios@1.6.7/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="/js/home.js"></script>
 </body>
 </html>
